@@ -1,27 +1,37 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
         
-            <defs>
-                <clipPath id="clip-shape">
-                    <rect width="100%" height="100%" rx="50%" ry="50%" />
-                </clipPath>
-            </defs>
-        
+			<defs>
+				<clipPath id="clip-shape">
+					<path d="M 256,0 C 51.2,0 0,51.2 0,256 C 0,460.8 51.2,512 256,512 C 460.8,512 512,460.8 512,256 C 512,51.2 460.8,0 256,0 Z" />
+				</clipPath>
+			</defs>
+		
 		<defs>
+			
+				<filter id="shadow-0" x="-200%" y="-200%" width="500%" height="500%">
+					<feDropShadow
+						dx="0"
+						dy="0.4"
+						stdDeviation="0.5333333333333333"
+						flood-color="#000000"
+						flood-opacity="0.18"
+					/>
+				</filter>
 			
 		</defs>
         <g clip-path="url(#clip-shape)">
             
             <defs>
-                <linearGradient id="bg-grad" x1="100%" y1="0%" x2="0%" y2="0%">
-                    <stop offset="0%" stop-color="#4285f4" /><stop offset="100%" stop-color="#34a853" />
+                <linearGradient id="bg-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#1c1c1c" /><stop offset="100%" stop-color="#2e2e2e" />
                 </linearGradient>
             </defs>
             <rect width="100%" height="100%" fill="url(#bg-grad)" />
         
 			
-            <g transform="translate(256, 256) scale(13.333333333333334, 13.333333333333334) rotate(0) translate(-12, -12)" opacity="1" style="mix-blend-mode: normal" >
-			<title xmlns="http://www.w3.org/2000/svg" fill="#ffffff">lucide:rocket</title>
-<g xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09" stroke="#ffffff"/><path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z" stroke="#ffffff"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05" stroke="#ffffff"/></g>
+            <g transform="translate(256, 256) scale(15, 15) rotate(0) translate(-8, -8)" opacity="1" style="mix-blend-mode: normal" filter="url(#shadow-0)">
+			<title xmlns="http://www.w3.org/2000/svg" fill="#f5b324">streamline-block:shopping-jewels</title>
+<path xmlns="http://www.w3.org/2000/svg" fill="#f5b324" fill-rule="evenodd" d="M0 7V5l4-4h8l4 4v2l-8 8zm14-1l-3-3l-3 3z" clip-rule="evenodd"/>
 		</g>
 			
         </g>

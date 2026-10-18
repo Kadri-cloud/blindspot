@@ -143,4 +143,4 @@ For **security problems**, please report privately through the repository's *Sec
 
 ## License
 
-[Apache 2.0](LICENSE). The logo uses the Rocket icon from [Lucide](https://lucide.dev) ([ISC license](https://lucide.dev/license)).
+[Apache 2.0](LICENSE). The logo uses the "Shopping Jewels" icon from [Streamline Block](https://www.streamlinehq.com) by Streamline, licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
