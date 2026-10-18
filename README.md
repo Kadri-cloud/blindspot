@@ -4,6 +4,8 @@ A private photo and video locker for Windows.
 
 Anything you add disappears from File Explorer, Windows Search and the Photos app. It only exists, encrypted, inside Locker. The Locker window is also **invisible in screen shares**, so it can't show up in a Teams or Zoom meeting by accident.
 
+**[⬇ Download for Windows](https://github.com/Kadri-cloud/locker/releases/latest)**: unzip and run `Locker.exe`, no installer needed. See [Install and run](#install-and-run) for details.
+
 ![Locker gallery](docs/screenshot.png)
 <sub>Screenshot made with placeholder images.</sub>
 
