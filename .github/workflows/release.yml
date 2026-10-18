@@ -56,6 +56,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+      # checkout leaves a lightweight tag; fetch the annotated one so its message can become the notes
+      - run: git fetch --force origin "refs/tags/$GITHUB_REF_NAME:refs/tags/$GITHUB_REF_NAME"
       - uses: actions/download-artifact@v4
         with: { merge-multiple: true }
       - run: gh release create "$GITHUB_REF_NAME" Blindspot-*.zip --draft --title "Blindspot ${GITHUB_REF_NAME#v}" --notes-from-tag --repo "$GITHUB_REPOSITORY"
