@@ -1,10 +1,19 @@
 const { app, BrowserWindow, ipcMain, dialog, protocol, powerMonitor, Menu } = require('electron');
-const path = require('path');
+const fs = require('fs'), path = require('path');
 const { Vault, EXTS } = require('./vault');
+
+// AI agents read an app three ways: screenshots, the accessibility tree, and debugging hooks. All three are closed.
+// 1. Accessibility tree off: UI Automation clients (Windows-MCP, UFO² and the like) see only an empty window.
+// ponytail: this also silences screen readers; add an opt-in screen-reader mode if someone needs one
+app.commandLine.appendSwitch('disable-renderer-accessibility');
+// 2. Debugging hooks: a release build refuses to start with them. The Node ones are also fused off in `npm run build`.
+if (app.isPackaged && process.argv.some(a => /^--(inspect|remote-debugging|remote-allow-origins)/.test(a))) app.exit(1);
 
 protocol.registerSchemesAsPrivileged([{ scheme: 'vault', privileges: { standard: true, secure: true, stream: true, supportFetchAPI: true } }]);
 
-const vault = new Vault(process.env.LOCKER_DIR || path.join(app.getPath('userData'), 'vault'));
+// Until v1.1 the app was called Locker and kept its vault under that name; keep using it if it's there.
+const legacy = path.join(app.getPath('appData'), 'Locker', 'vault');
+const vault = new Vault(process.env.BLINDSPOT_DIR || (fs.existsSync(legacy) ? legacy : path.join(app.getPath('userData'), 'vault')));
 let win;
 
 function lock() {
@@ -38,10 +47,13 @@ app.whenReady().then(() => {
   protocol.handle('vault', serve);
 
   win = new BrowserWindow({
-    width: 1200, height: 800, backgroundColor: '#0e0e10', title: 'Locker',
-    webPreferences: { preload: path.join(__dirname, 'preload.js') },
+    width: 1200, height: 800, backgroundColor: '#0e0e10', title: 'Blindspot', show: false,
+    webPreferences: { preload: path.join(__dirname, 'preload.js'), devTools: !app.isPackaged },
   });
-  win.setContentProtection(true); // window shows as blank in screen shares, recordings and screenshots
+  // 3. Screenshots: protection is on before the window is first shown, so no frame is ever capturable.
+  // Screen shares, recordings, Recall and screenshot-based agents see whatever is behind the window.
+  win.setContentProtection(true);
+  win.once('ready-to-show', () => win.show());
   win.on('minimize', lock);
   powerMonitor.on('lock-screen', lock);
   win.webContents.on('will-navigate', e => e.preventDefault()); // dropping a file must not open it
@@ -63,7 +75,7 @@ ipcMain.handle('lock', lock);
 ipcMain.handle('import', async (_, paths, folder) => {
   if (!paths?.length) {
     const r = await dialog.showOpenDialog(win, {
-      title: 'Move photos and videos into Locker',
+      title: 'Move photos and videos into Blindspot',
       properties: ['openFile', 'multiSelections'],
       filters: [{ name: 'Photos and videos', extensions: EXTS }, { name: 'All files', extensions: ['*'] }],
     });

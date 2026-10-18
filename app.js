@@ -218,7 +218,7 @@ addEventListener('keydown', e => {
 addEventListener('dragover', e => {
   e.preventDefault();
   if ($('#gallery').hidden || !e.dataTransfer.types.includes('Files') || !e.target.closest('#main, #drop')) return;
-  $('#drop').textContent = folder ? `Drop to move into "${folder}"` : 'Drop to move into Locker';
+  $('#drop').textContent = folder ? `Drop to move into "${folder}"` : 'Drop to move into Blindspot';
   $('#drop').hidden = false;
 });
 $('#drop').ondragleave = () => { $('#drop').hidden = true; };
