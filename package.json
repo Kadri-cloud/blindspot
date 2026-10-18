@@ -1,0 +1,19 @@
+{
+  "name": "locker",
+  "productName": "Locker",
+  "version": "1.0.0",
+  "description": "A private photo and video locker for Windows: encrypted, offline, and invisible in screen shares.",
+  "license": "Apache-2.0",
+  "repository": "github:Kadri-cloud/locker",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "node test.js",
+    "build": "electron-packager . Locker --platform=win32 --arch=x64 --out=dist --overwrite --ignore=^/dist --ignore=^/docs --ignore=test.js"
+  },
+  "devDependencies": {
+    "@electron/packager": "^20.3.0",
+    "electron": "^44.7.2"
+  }
+}

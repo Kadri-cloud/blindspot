@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src vault:; media-src vault:">
+<title>Locker</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main id="lock" hidden>
+  <form id="lockForm">
+    <h1>Locker</h1>
+    <p id="lockHint"></p>
+    <input type="password" id="pw" placeholder="Password" aria-label="Password">
+    <input type="password" id="pw2" placeholder="Repeat password" aria-label="Repeat password" hidden>
+    <button id="unlockBtn">Unlock</button>
+    <p class="error" id="lockError" role="status"></p>
+  </form>
+</main>
+
+<div id="gallery" hidden>
+  <header>
+    <h1>Locker</h1>
+    <span id="status" role="status"></span>
+    <button id="addBtn">Add photos &amp; videos</button>
+    <button id="lockBtn" class="ghost">Lock</button>
+  </header>
+  <p id="empty" hidden>Drag photos and videos here, or click <b>Add</b>.<br>They're moved in and encrypted, and the originals are deleted from where they were.</p>
+  <section id="grid"></section>
+</div>
+
+<div id="viewer" hidden>
+  <div class="bar">
+    <span id="vName"></span><span class="spacer"></span>
+    <button id="vExport">Export</button>
+    <button id="vDelete" class="danger">Delete</button>
+    <button id="vClose" class="ghost" aria-label="Close">✕</button>
+  </div>
+  <div id="stage"></div>
+  <button class="nav prev" aria-label="Previous">‹</button>
+  <button class="nav next" aria-label="Next">›</button>
+</div>
+
+<div id="drop" hidden>Drop to move into Locker</div>
+<script src="app.js"></script>
+</body>
+</html>
