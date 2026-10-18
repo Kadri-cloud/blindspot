@@ -1,6 +1,6 @@
 // Self-check: node test.js
 const assert = require('assert'), fs = require('fs'), os = require('os'), path = require('path'), crypto = require('crypto');
-const { Vault } = require('./vault');
+const { Vault, seal } = require('./vault');
 
 (async () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'locker-test-'));
@@ -30,6 +30,24 @@ const { Vault } = require('./vault');
 
   await v.remove(id);
   assert(!fs.existsSync(v.file(id)) && v.items.length === 0, 'remove');
+
+  // folders and notes
+  v.addFolder('Family'); v.addFolder('Family');
+  assert.deepEqual(v.folders, ['Family'], 'folder names are unique');
+  const note = v.addNote('Family');
+  v.update(note.id, { name: 'Dear me', text: 'secret ✓' });
+  v.lock(); await v.unlock('pw');
+  assert.equal(v.items[0].text, 'secret ✓', 'note survives relock');
+  assert(!fs.readFileSync(v.file('index')).includes('secret'), 'note text is encrypted');
+  await v.export(note.id, path.join(dir, 'note.txt'));
+  assert.equal(fs.readFileSync(path.join(dir, 'note.txt'), 'utf8'), 'secret ✓', 'note export');
+  v.removeFolder('Family');
+  assert(v.folders.length === 0 && v.items[0].folder === null, 'removing a folder keeps its items');
+
+  // a v1.0 locker stored the index as a bare array
+  fs.writeFileSync(v.file('index'), seal(v.key, Buffer.from(JSON.stringify([{ id: 'x', name: 'old.jpg' }]))));
+  v.lock(); await v.unlock('pw');
+  assert(v.items[0].name === 'old.jpg' && v.folders.length === 0, 'v1.0 index opens');
 
   fs.rmSync(dir, { recursive: true });
   console.log('ok');

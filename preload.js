@@ -10,5 +10,9 @@ contextBridge.exposeInMainWorld('api', {
   import: call('import'),
   export: call('export'),
   remove: call('remove'),
+  addNote: call('addNote'),
+  update: call('update'),
+  addFolder: call('addFolder'),
+  removeFolder: call('removeFolder'),
   pathOf: file => webUtils.getPathForFile(file),
 });

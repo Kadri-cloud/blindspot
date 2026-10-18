@@ -57,10 +57,10 @@ ipcMain.handle('unlock', async (_, password) => {
   catch (e) { return { error: e.message }; }
 });
 
-ipcMain.handle('list', () => vault.items);
+ipcMain.handle('list', () => ({ items: vault.items, folders: vault.folders }));
 ipcMain.handle('lock', lock);
 
-ipcMain.handle('import', async (_, paths) => {
+ipcMain.handle('import', async (_, paths, folder) => {
   if (!paths?.length) {
     const r = await dialog.showOpenDialog(win, {
       title: 'Move photos and videos into Locker',
@@ -71,7 +71,7 @@ ipcMain.handle('import', async (_, paths) => {
   }
   const failed = [];
   for (const p of paths) {
-    try { await vault.add(p); }
+    try { await vault.add(p, folder); }
     catch (e) { failed.push(`${path.basename(p)}: ${e.message}`); }
   }
   return { added: paths.length - failed.length, failed };
@@ -79,10 +79,15 @@ ipcMain.handle('import', async (_, paths) => {
 
 ipcMain.handle('export', async (_, id) => {
   const it = vault.items.find(x => x.id === id);
-  const r = await dialog.showSaveDialog(win, { defaultPath: path.join(app.getPath('downloads'), it.name) });
+  const name = it.type === 'text/plain' ? `${it.name || 'Note'}.txt`.replace(/[\\/:*?"<>|]/g, '_') : it.name;
+  const r = await dialog.showSaveDialog(win, { defaultPath: path.join(app.getPath('downloads'), name) });
   if (r.canceled) return false;
   await vault.export(id, r.filePath);
   return true;
 });
 
 ipcMain.handle('remove', (_, id) => vault.remove(id));
+ipcMain.handle('addNote', (_, folder) => vault.addNote(folder));
+ipcMain.handle('update', (_, id, { name, text, folder }) => vault.update(id, Object.fromEntries(Object.entries({ name, text, folder }).filter(([, v]) => v !== undefined))));
+ipcMain.handle('addFolder', (_, name) => vault.addFolder(name));
+ipcMain.handle('removeFolder', (_, name) => vault.removeFolder(name));

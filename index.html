@@ -19,19 +19,28 @@
 </main>
 
 <div id="gallery" hidden>
-  <header>
+  <aside id="side">
     <h1>Locker</h1>
-    <span id="status" role="status"></span>
-    <button id="addBtn">Add photos &amp; videos</button>
-    <button id="lockBtn" class="ghost">Lock</button>
-  </header>
-  <p id="empty" hidden>Drag photos and videos here, or click <b>Add</b>.<br>They're moved in and encrypted, and the originals are deleted from where they were.</p>
-  <section id="grid"></section>
+    <nav id="folders" aria-label="Folders"></nav>
+    <form id="folderForm"><input id="folderName" placeholder="+ New folder" aria-label="New folder name" maxlength="60"></form>
+  </aside>
+  <div id="main">
+    <header>
+      <h2 id="title">All items</h2>
+      <span id="status" role="status"></span>
+      <button id="noteBtn" class="ghost">New note</button>
+      <button id="addBtn">Add photos &amp; videos</button>
+      <button id="lockBtn" class="ghost">Lock</button>
+    </header>
+    <p id="empty" hidden></p>
+    <section id="grid"></section>
+  </div>
 </div>
 
 <div id="viewer" hidden>
   <div class="bar">
     <span id="vName"></span><span class="spacer"></span>
+    <select id="vFolder" aria-label="Folder"></select>
     <button id="vExport">Export</button>
     <button id="vDelete" class="danger">Delete</button>
     <button id="vClose" class="ghost" aria-label="Close">✕</button>
@@ -41,7 +50,7 @@
   <button class="nav next" aria-label="Next">›</button>
 </div>
 
-<div id="drop" hidden>Drop to move into Locker</div>
+<div id="drop" hidden></div>
 <script src="app.js"></script>
 </body>
 </html>
