@@ -1,15 +1,17 @@
+<img src="logo.svg" width="88" alt="Blindspot logo">
+
 # Blindspot
 
-**The one spot on your PC that AI can't see.**
+**The one spot on your computer that AI can't see.**
 
-A private locker for your photos, videos and notes on Windows. Anything you add disappears from File Explorer, Windows Search and the Photos app. It only exists, encrypted, inside Blindspot, and the Blindspot window is hidden from **AI agents, screenshots and screen shares**.
+A private locker for your photos, videos and notes on Windows and Mac. Anything you add disappears from File Explorer, Windows Search and the Photos app. It only exists, encrypted, inside Blindspot, and the Blindspot window is hidden from **AI agents, screenshots and screen shares**.
 
-**[⬇ Download for Windows](https://github.com/Kadri-cloud/blindspot/releases/latest)**: unzip and run `Blindspot.exe`, no installer needed. See [Install and run](#install-and-run) for details.
+**[⬇ Download for Windows or Mac](https://github.com/Kadri-cloud/blindspot/releases/latest)**: unzip and run, no installer needed. See [Install and run](#install-and-run) for details.
 
 ![Blindspot gallery](docs/screenshot.png)
 <sub>Screenshot made with placeholder images and notes.</sub>
 
-> **Status:** early, Windows only, **not security-audited**. Read the [threat model](#threat-model) before trusting it with anything. Blindspot was called *Locker* until v1.1; an existing locker is picked up automatically.
+> **Status:** early and **not security-audited**. Windows is the main platform; the Mac version is new and experimental, see [On a Mac](#on-a-mac). Read the [threat model](#threat-model) before trusting it with anything. Blindspot was called *Locker* until v1.1; an existing locker is picked up automatically.
 
 ---
 
@@ -37,7 +39,7 @@ As far as we could find, **none of them hides its window from screen shares or A
 ## What Blindspot does
 
 - **Invisible to AI agents.** AI agents read an app in three ways, and Blindspot blocks all three:
-  - **Screenshots:** Recall, screenshot-based agents, screen shares and recordings see whatever is behind the window.
+  - **Screenshots** (Windows): Recall, screenshot-based agents, screen shares and recordings see whatever is behind the window. Macs can't fully do this, see [On a Mac](#on-a-mac).
   - **The accessibility layer:** agents that read app text without pixels see an empty window.
   - **Debugging hooks:** the release build refuses to start in debug mode and ignores code-injection switches.
 - **One password.** Nothing is visible until you unlock.
@@ -55,7 +57,7 @@ The app is about 650 lines. Its only runtime dependency is Electron; all encrypt
 
 | | |
 |---|---|
-| **Storage** | `%APPDATA%\Blindspot\vault` holds a `salt`, an encrypted `index` (names, dates, types, folders and the text of your notes) and one file per item, named with 32 random hex characters and no extension. Windows and AI indexers have nothing to recognise, preview or read. |
+| **Storage** | `%APPDATA%\Blindspot\vault` (Mac: `~/Library/Application Support/Blindspot/vault`) holds a `salt`, an encrypted `index` (names, dates, types, folders and the text of your notes) and one file per item, named with 32 random hex characters and no extension. Windows and AI indexers have nothing to recognise, preview or read. |
 | **Key** | scrypt (N=2¹⁷, r=8, p=1) from your password and a random 16-byte salt. The key exists only in memory while the locker is unlocked and is zeroed when it locks. |
 | **Encryption** | AES-256-GCM in 1 MiB chunks. Each chunk has its own random 96-bit nonce, and its chunk number is bound in as associated data, so chunks can't be swapped around. Chunking lets a video seek without decrypting the whole file. |
 | **Viewing** | A custom `vault://` protocol streams decrypted bytes straight into `<img>` and `<video>`. No decrypted temporary files are ever written. |
@@ -77,6 +79,7 @@ The code is short enough to read in one sitting. Start with [`vault.js`](vault.j
 **Blindspot does not protect against**
 - **An AI agent or program that can run code as you while Blindspot is unlocked.** It can get around anything an app can do. Lock Blindspot before giving an agent control of your PC.
 - **Remote Desktop.** The window still shows in an RDP session.
+- **Screen capture on a Mac.** See [On a Mac](#on-a-mac).
 - **Phone cameras.** If your eyes can see the screen, a camera in the same spot can too.
 - **Traces from before you imported.** Windows may already have thumbnails cached, Recent-files entries, Recycle Bin copies, or cloud backups of the originals. After your first import, run *Disk Cleanup → Thumbnails* and check your cloud sync.
 - **Recovery of deleted originals** from the disk, especially on SSDs. Turn on BitLocker or Device Encryption for full-disk coverage.
@@ -88,9 +91,23 @@ Microsoft describes the screen-capture flag as [best-effort, not a security boun
 
 ## Install and run
 
-**Download:** get `Blindspot-win-x64.zip` from the [latest release](https://github.com/Kadri-cloud/blindspot/releases/latest), unzip it anywhere, and run `Blindspot.exe`. To keep it handy, right-click `Blindspot.exe` and choose *Pin to Start*.
+Get the right file from the [latest release](https://github.com/Kadri-cloud/blindspot/releases/latest):
 
-The app isn't code-signed yet, so Windows SmartScreen may say *"Windows protected your PC"*. Click *More info → Run anyway*. If you'd rather not trust a download, build it yourself from source.
+| Computer | File |
+|---|---|
+| Windows | `Blindspot-win-x64.zip`: unzip anywhere and run `Blindspot.exe`. Right-click it and choose *Pin to Start* to keep it handy. |
+| Mac with Apple silicon (M1 or later) | `Blindspot-mac-arm64.zip` |
+| Older Mac with an Intel chip | `Blindspot-mac-x64.zip` |
+
+Every download is built by GitHub from the public code ([how](.github/workflows/release.yml)), not on anyone's laptop.
+
+The apps aren't code-signed yet. On **Windows**, SmartScreen may say *"Windows protected your PC"*: click *More info → Run anyway*. On a **Mac**, unzip, move `Blindspot.app` to Applications and open it. macOS will refuse the first time; go to *System Settings → Privacy & Security*, scroll down and click *Open Anyway*. If you'd rather not trust a download, build it yourself from source.
+
+### On a Mac
+
+The Mac version is **experimental**: it's built and start-tested automatically, but hasn't been tried by people on real Macs yet. Encryption, folders, notes, the accessibility block and the debugging lock all work the same. One promise is weaker:
+
+- **Screen sharing and screenshots can see Blindspot on a Mac.** Apple deliberately lets apps built on its newer ScreenCaptureKit (most current screen-sharing and recording apps) [capture every window](https://www.electronjs.org/docs/latest/api/browser-window#winsetcontentprotectionenable-macos-windows), and no app can opt out. Lock Blindspot before you share your screen.
 
 **From source** (needs [Node.js](https://nodejs.org) 20 or later):
 
@@ -113,7 +130,7 @@ npm run build      # makes dist/Blindspot-win32-x64/Blindspot.exe with debugging
 - The gallery loads full-size files rather than thumbnails, so it may slow down with thousands of items.
 - There's no way to change the password yet, and there's one locker per Windows user.
 - Folders are one level deep and can't be renamed yet. Notes are plain text.
-- Tested only on Windows 11. Copilot Vision and Click to Do haven't been tested yet (they need a Copilot+ PC).
+- Tested by hand only on Windows 11. Copilot Vision and Click to Do haven't been tested yet (they need a Copilot+ PC). The Mac version is only start-tested automatically.
 - Locking when Windows locks (Win+L) hasn't been tested yet. Locking on minimise has.
 
 ## Contributing
@@ -126,4 +143,4 @@ For **security problems**, please report privately through the repository's *Sec
 
 ## License
 
-[Apache 2.0](LICENSE)
+[Apache 2.0](LICENSE). The logo uses the Rocket icon from [Lucide](https://lucide.dev) ([ISC license](https://lucide.dev/license)).

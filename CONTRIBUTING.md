@@ -36,7 +36,9 @@ Every change needs to keep these. They're the reason the app exists.
 - **Thumbnails** so big lockers stay fast.
 - **Change password**, rename folders, folders inside folders.
 - **HEIC preview** for iPhone photos.
-- **Testing** on Windows 10, on Copilot+ PCs (Copilot Vision, Click to Do), and on macOS and Linux.
+- **Testing on real Macs:** the Mac build is experimental. Tell us what works and what doesn't.
+- **Mac signing and notarization**, so macOS stops warning on first open (needs an Apple Developer account).
+- **Testing** on Windows 10, on Copilot+ PCs (Copilot Vision, Click to Do), and on Linux.
 
 ## Reporting problems
 

@@ -43,7 +43,8 @@ function serve(req) {
 }
 
 app.whenReady().then(() => {
-  Menu.setApplicationMenu(null);
+  // No menu bar; macOS still needs the app and Edit menus for Cmd+Q and copy/paste.
+  Menu.setApplicationMenu(process.platform === 'darwin' ? Menu.buildFromTemplate([{ role: 'appMenu' }, { role: 'editMenu' }]) : null);
   protocol.handle('vault', serve);
 
   win = new BrowserWindow({

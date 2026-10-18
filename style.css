@@ -18,12 +18,14 @@ select { padding: 7px 10px; }
 #lock { height: 100vh; display: grid; place-items: center; }
 #lockForm { width: 320px; display: grid; gap: 12px; text-align: center; }
 #lockForm h1 { margin: 0; font-size: 28px; font-weight: 600; }
+.logo { width: 72px; height: 72px; margin: 0 auto; }
 #lockHint { margin: 0; color: var(--muted); }
 .error { min-height: 1.5em; margin: 0; color: var(--muted); }
 
 #gallery { display: grid; grid-template-columns: 220px 1fr; height: 100vh; }
 #side { display: flex; flex-direction: column; gap: 2px; padding: 14px 12px; border-right: 1px solid var(--line); overflow-y: auto; }
-#side h1 { margin: 2px 8px 14px; font-size: 18px; font-weight: 600; }
+#side h1 { display: flex; align-items: center; gap: 10px; margin: 2px 8px 14px; font-size: 18px; font-weight: 600; }
+#side h1 img { width: 24px; height: 24px; }
 .row { position: relative; display: flex; }
 .folder { flex: 1; display: flex; justify-content: space-between; gap: 8px; padding: 7px 10px; text-align: left; font-weight: 500; color: var(--text); background: transparent; border-radius: 6px; overflow: hidden; }
 .folder:hover, .folder.over { background: var(--panel); }

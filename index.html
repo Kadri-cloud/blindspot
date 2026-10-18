@@ -2,13 +2,14 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src vault:; media-src vault:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' vault:; media-src vault:">
 <title>Blindspot</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <main id="lock" hidden>
   <form id="lockForm">
+    <img src="logo.svg" class="logo" alt="">
     <h1>Blindspot</h1>
     <p id="lockHint"></p>
     <input type="password" id="pw" placeholder="Password" aria-label="Password">
@@ -20,7 +21,7 @@
 
 <div id="gallery" hidden>
   <aside id="side">
-    <h1>Blindspot</h1>
+    <h1><img src="logo.svg" alt="">Blindspot</h1>
     <nav id="folders" aria-label="Folders"></nav>
     <form id="folderForm"><input id="folderName" placeholder="+ New folder" aria-label="New folder name" maxlength="60"></form>
   </aside>

@@ -1,7 +1,7 @@
 {
   "name": "blindspot",
   "productName": "Blindspot",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A private locker for photos, videos and notes on Windows that AI agents, screenshots and screen shares can't see into.",
   "license": "Apache-2.0",
   "repository": "github:Kadri-cloud/blindspot",
@@ -10,7 +10,7 @@
   "scripts": {
     "start": "electron .",
     "test": "node test.js",
-    "build": "electron-packager . Blindspot --platform=win32 --arch=x64 --out=dist --overwrite --ignore=^/dist --ignore=^/docs --ignore=test.js && electron-fuses write --app dist/Blindspot-win32-x64/Blindspot.exe RunAsNode=off EnableNodeOptionsEnvironmentVariable=off EnableNodeCliInspectArguments=off"
+    "build": "electron-packager . Blindspot --platform=win32 --arch=x64 --out=dist --icon=build/icon.ico --overwrite --ignore=^/dist --ignore=^/docs --ignore=^/build --ignore=test.js && electron-fuses write --app dist/Blindspot-win32-x64/Blindspot.exe RunAsNode=off EnableNodeOptionsEnvironmentVariable=off EnableNodeCliInspectArguments=off"
   },
   "devDependencies": {
     "@electron/fuses": "^2.1.3",

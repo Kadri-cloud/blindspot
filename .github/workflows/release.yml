@@ -1,0 +1,62 @@
+# Pushing a tag like v2.1.0 builds Windows and macOS apps from this exact commit
+# and opens a draft release with them. The tag's message becomes the release notes.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - { os: windows-latest, target: win-x64 }
+          - { os: macos-latest, target: mac-arm64, arch: arm64 }
+          - { os: macos-latest, target: mac-x64, arch: x64 }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm ci
+      - run: npm test
+
+      - name: Build Windows
+        if: runner.os == 'Windows'
+        run: |
+          npm run build
+          Compress-Archive -Path dist/Blindspot-win32-x64/* -DestinationPath Blindspot-${{ matrix.target }}.zip
+
+      - name: Build macOS
+        if: runner.os == 'macOS'
+        run: |
+          npx electron-packager . Blindspot --platform=darwin --arch=${{ matrix.arch }} --icon=build/icon.icns --out=dist --overwrite --ignore='^/(dist|docs|build)' --ignore=test.js
+          app=dist/Blindspot-darwin-${{ matrix.arch }}/Blindspot.app
+          npx electron-fuses write --app "$app" RunAsNode=off EnableNodeOptionsEnvironmentVariable=off EnableNodeCliInspectArguments=off
+          # Flipping fuses invalidates Electron's signature; Apple Silicon refuses unsigned apps, so re-sign ad hoc.
+          codesign --force --deep --sign - "$app"
+          ditto -c -k --keepParent "$app" Blindspot-${{ matrix.target }}.zip
+
+      - name: Smoke test (app starts and stays up)
+        if: matrix.arch == 'arm64'
+        run: |
+          export BLINDSPOT_DIR="$RUNNER_TEMP/vault"
+          dist/Blindspot-darwin-arm64/Blindspot.app/Contents/MacOS/Blindspot & pid=$!
+          sleep 15
+          kill -0 $pid && echo "Blindspot is running" && kill $pid
+
+      - uses: actions/upload-artifact@v4
+        with: { name: '${{ matrix.target }}', path: 'Blindspot-*.zip' }
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { merge-multiple: true }
+      - run: gh release create "$GITHUB_REF_NAME" Blindspot-*.zip --draft --title "Blindspot ${GITHUB_REF_NAME#v}" --notes-from-tag --repo "$GITHUB_REPOSITORY"
+        env: { GH_TOKEN: '${{ github.token }}' }
