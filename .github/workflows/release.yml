@@ -61,5 +61,14 @@ jobs:
       - run: git fetch --force origin "refs/tags/$GITHUB_REF_NAME:refs/tags/$GITHUB_REF_NAME"
       - uses: actions/download-artifact@v4
         with: { merge-multiple: true }
-      - run: gh release create "$GITHUB_REF_NAME" Blindspot-*.zip --draft --title "Blindspot ${GITHUB_REF_NAME#v}" --notes-from-tag --repo "$GITHUB_REPOSITORY"
-        env: { GH_TOKEN: '${{ github.token }}' }
+      - name: Create draft release
+        env: { GH_TOKEN: '${{ github.token }}', GH_REPO: '${{ github.repository }}' }
+        run: |
+          git tag -l --format='%(contents)' "$GITHUB_REF_NAME" > notes.md
+          echo "::notice::files: $(ls Blindspot-*.zip | tr '\n' ' ') notes: $(wc -l < notes.md) lines"
+          # A failed earlier run may have left a draft behind: reuse it instead of failing.
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" Blindspot-*.zip --clobber 2> err.txt
+          else
+            gh release create "$GITHUB_REF_NAME" Blindspot-*.zip --draft --title "Blindspot ${GITHUB_REF_NAME#v}" --notes-file notes.md 2> err.txt
+          fi || { echo "::error::$(tr '\n' ' ' < err.txt)"; exit 1; }
