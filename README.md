@@ -79,7 +79,11 @@ The design uses standard primitives, but **no independent security review has ha
 
 ## Install and run
 
-There's no prebuilt download yet, so you build it yourself. You need [Node.js](https://nodejs.org) 20 or later.
+**Download:** get `Locker-win-x64.zip` from the [latest release](https://github.com/Kadri-cloud/locker/releases/latest), unzip it anywhere, and run `Locker.exe`. To keep it handy, right-click `Locker.exe` and choose *Pin to Start*.
+
+The app isn't code-signed yet, so Windows SmartScreen may say *"Windows protected your PC"*. Click *More info → Run anyway*. If you'd rather not trust a download, build it yourself from source.
+
+**From source** (needs [Node.js](https://nodejs.org) 20 or later):
 
 ```bash
 git clone https://github.com/Kadri-cloud/locker.git
@@ -89,8 +93,6 @@ npm start          # run from source
 npm test           # encryption self-check
 npm run build      # makes dist/Locker-win32-x64/Locker.exe
 ```
-
-To keep it handy, right-click `Locker.exe` and choose *Pin to Start*.
 
 **Back up** by copying `%APPDATA%\Locker\vault` somewhere safe. It's unreadable without your password.
 **Uninstall** by deleting the app folder. Your locker stays in `%APPDATA%\Locker` until you delete that too, so export anything you want to keep first.
